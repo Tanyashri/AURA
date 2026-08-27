@@ -190,13 +190,6 @@ We welcome contributions! To get involved:
 - Enhanced explainability visualizations
 - Performance optimization
 
-## 👥 Team
-
-- **Shreyank** — Model development & MLOps
-- **Shamanth** — Frontend architecture & UI/UX
-- **Tanya** — Regulatory compliance & hallucination detection
-- **Yashas** — Data pipeline & drift monitoring
-
 ## 📄 License
 
 This project is licensed under the MIT License — see `LICENSE` file for details.
