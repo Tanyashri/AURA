@@ -8,138 +8,102 @@ AURA is a sophisticated autonomous credit assessment platform that combines mach
 
 AURA automates and demystifies credit risk assessment through:
 
-- **Algorithmic Assessment Engine**: One-click credit evaluation using a production-grade Random Forest model (11 engineered features, 0.754 AUC)
-- **Autonomous Drift Detection**: Monitors feature distributions in real time via Population Stability Index (PSI) analysis
-- **Champion/Challenger Framework**: Automatically validates and promotes improved models to production
-- **LLM Hallucination Firewall**: Detects and blocks regulatory false citations in explanations, ensuring compliance
-- **Regulatory Transparency**: Every decision traces back to RBI/SEBI regulations with factual grounding scores
+- **Algorithmic Assessment Engine**: Credit evaluation using production-grade XGBoost & Random Forest models (11 engineered features, 0.7352 Champion AUC, 72.1% accuracy)
+- **AURA Risk Intelligence Agent**: Evidence-grounded observation, distribution analysis, and safe orchestration layer
+- **Autonomous Drift Detection**: Monitors feature distributions via Population Stability Index (PSI) analysis
+- **Deterministic Champion/Challenger Gate**: Evaluates candidate models against strict mathematical promotion threshold ($\Delta \text{AUC} \ge 0.004$)
+- **LLM Hallucination Firewall & ACTR Framework**: 4-stage cross-truth reasoning ensuring compliance and zero hallucinations
+- **Unity Catalog & Delta Lake Governance**: Complete audit logs separating Agent Recommendations from System Decisions
 
-**Production Stats:**
-- 297K+ applications processed
-- 0.754 AUC (Champion model)
-- 11 engineered features  
-- 2 critical drift features detected & auto-retrained
+**Documented Production Stats:**
+- 307,511 raw applications · 297,664 cleaned records
+- 0.6166 Baseline Random Forest AUC
+- 0.7278 Improved Random Forest Champion (v6) AUC
+- 0.5087 Early Challenger candidate (v10) $\rightarrow$ Safely **REJECTED** by deterministic gate ($\Delta -0.2191 < 0.004$)
+- 0.7327 Challenger (v11) $\rightarrow$ **PROMOTED** to production ($\Delta +0.0049 \ge 0.004$)
+- 0.7352 Final XGBoost Champion (v12) AUC · 72.1% Accuracy · 0.2635 F1
+- 3 Critical drift features detected & monitored: `credit_income_ratio` (PSI 2.7008), `employment_years` (PSI 1.3962), `income` (PSI 0.7726)
 
-## 🚀 Why AURA Matters
-
-### For Lenders
-- **Faster Approvals**: Real-time assessment in seconds
-- **Regulatory Compliance**: Every decision cites RBI/SEBI guidelines with hallucination filtering
-- **Risk Transparency**: Understand exactly why each applicant was approved or rejected
-- **Self-Healing**: Automatically detects model drift and retrains without manual intervention
-
-### For Developers
-- **End-to-End MLOps**: Bronze → Silver → Gold data pipeline with Unity Catalog governance
-- **Explainability**: Feature-level risk analysis + RAG-based explanations
-- **Monitoring**: Live dashboards for model performance, drift, and hallucination metrics
-- **Production-Ready**: Built on industry-standard Databricks/MLflow infrastructure
-
-## ⚡ Getting Started
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/MS-Shamanth/Project_Aura.git
-   cd Project_Aura
-   ```
-
-2. **Open in browser:**
-   - Open `index.html` in a modern web browser (Chrome, Firefox, Safari, Edge)
-   - No build tools or external dependencies required—it's a static site with vanilla JavaScript
-
-3. **Explore the demo:**
-   - Navigate to the **Assessment Engine** section
-   - Click "Load High Risk Customer" or "Load Low Risk Customer" preset
-   - Manually enter applicant details (income, age, credit-income ratio, etc.) to test the model
-   - View real-time drift metrics and model comparison in the **System Dashboard**
-   - Review hallucination detection in the **LLM Court** section
-
-### Quick Usage
-
-#### Run a Credit Assessment
-```javascript
-// In browser console or embedded in your form
-assessLoan();  // Scores the applicant with 11-feature model
-```
-
-#### Load Demo Profiles
-- **High Risk**: 42.4% default probability → REJECTED
-- **Low Risk**: 5.8% default probability → APPROVED
-
-#### Check Real-Time Metrics
-- **Active Model**: aura_credit_champion (Production)
-- **Champion AUC**: 0.7210  
-- **Challenger AUC**: 0.7540 (better, queued for promotion)
-- **Drifted Features**: 2 critical (income, credit_income_ratio)
-
-## 📊 Architecture
+## 🏛️ Architecture: 3 Clear Layers of Responsibility
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                     AURA MLOps Pipeline                          │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Raw Data  →  Bronze  →  Silver  →  Gold  →  MLflow  →  Serving │
-│  (Raw)      (ingested) (cleaned) (ML-ready) (tracking) (API)    │
-│                                                                   │
-│  ↓ Unity Catalog Governance (Data Lineage + Access Control)      │
-│  ↓ PSI Drift Detection (gold.drift_metrics)                      │
-│  ↓ Retraining Ledger (gold.retraining_log)                       │
-│  ↓ LLM Evaluation Metrics (gold.llm_evaluation_metrics)          │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
+                                PRODUCTION DATA
+                                      ↓
+                               EXISTING PIPELINE
+                                      ↓
+                              FEATURE ENGINEERING
+                                      ↓
+                            CREDIT RISK ML MODEL (XGBoost)
+                                      ↓
+                                 PREDICTIONS
+                                      ↓
+                              PSI DRIFT MONITOR
+                                      ↓
+                         ┌─────────────────────────┐
+                         │ AURA RISK INTELLIGENCE  │
+                         │         AGENT           │
+                         │                         │
+                         │ • Observe               │
+                         │ • Analyze               │
+                         │ • Explain               │
+                         │ • Recommend             │
+                         │ • Orchestrate           │
+                         └────────────┬────────────┘
+                                      ↓
+                             EXISTING RETRAINING
+                                      ↓
+                                 CHALLENGER
+                                      ↓
+                           CHAMPION vs CHALLENGER
+                                      ↓
+                           DETERMINISTIC GATE (0.004)
+                                  /        \
+                             PROMOTE      REJECT
+                                ↓            ↓
+                           NEW CHAMPION  KEEP CHAMPION
+                                \            /
+                                 ↓          ↓
+                              MLflow + Unity Catalog
+                                      ↓
+                                 AUDIT TRAIL
+                                      ↓
+                                 EXISTING UI
 ```
 
-### Core Components
+### Layer Separation
+1. **ML Layer**: Predicts credit risk default probabilities using the trained model and 11 engineered features.
+2. **Agent Layer**: Observes live signals, analyzes distribution drift, evaluates quantitative Model Health ($0-100$), produces structured recommendations, and orchestrates workflows.
+3. **Safety Layer**: The deterministic Champion/Challenger evaluation gate ($\text{Challenger AUC} - \text{Champion AUC} \ge 0.004$) is the sole authority for model promotion. The Agent **never** bypasses or overrides this gate.
 
-**Frontend (Static Web App)**
-- `index.html` — Three-section landing page: Assessment, Dashboard, Architecture
-- `script.js` — Interactive logic for scoring, drift visualization, hallucination evaluation
-- `style.css` — Glassmorphism design with particle effects and smooth animations
-- `data.js` — Mock data + API client stubs for Databricks integration
-
-**Feature Engineering (11 Engineered Features)**
-1. `income` — Scaled annual income
-2. `age_years` — Applicant age
-3. `credit_income_ratio` — Credit limit ÷ income
-4. `employment_years` — Job tenure
-5. `ext_source_1`, `ext_source_2`, `ext_source_3` — Bureau scores (external)
-6. `ext_mean` — Average of external sources
-7. `ext_min` — Minimum of external sources
-8. `income_age_ratio` — Income normalized by age
-9. `credit_per_year` — Credit per year of employment
-
-**Model Configuration**
-- **Champion**: `aura_credit_champion` (AUC: 0.7210, Production)
-- **Challenger**: `aura_credit_challenger` (AUC: 0.7540, Staging)
-- **Trigger**: Automatic promotion when Challenger AUC > Champion + threshold
-
-## 📈 Key Features
+## 🚀 Key Features
 
 ### 1. **Assessment Engine**
-- 11-feature Random Forest model
-- Real-time probability scoring
-- Auto-computed derived features
-- Applicant-level explanations with regulatory citations
+- 11-feature model with real-time probability scoring
+- Auto-computed derived features (CIR, credit-per-year, ext_mean, income-age ratio)
+- Expandable **Why this prediction?** risk factor attribution breakdown
+- ACTR Grounded safe explanations with regulatory cross-referencing
 
-### 2. **System Dashboard**
-- **Live KPIs**: Active model, AUC, drifted features, hallucinations blocked
-- **Drift Widget**: PSI scores for each feature with severity indicators
-- **Retraining Ledger**: Autonomous retrain triggers and decisions
-- **Hallucination Firewall**: Tracks blocked explanations with invalid citations
+### 2. **AURA Risk Intelligence Agent**
+- **Structured States**: `STABLE`, `MONITOR`, `RETRAIN`, `PROMOTE`, `REJECT`, `ESCALATE` (`HUMAN_REVIEW_REQUIRED`).
+- **Model Health Scoring ($0–100$)**: Measurable formula based on active AUC (35 pts), max PSI drift penalty (45 pts), and lineage/gate stability (20 pts).
+- **"Why Did AURA Take This Action?"**: Live telemetry evidence breakdown.
+- **"Ask AURA"**: Evidence-grounded Q&A engine based strictly on Delta Lake and Unity Catalog telemetry.
+- **Simulate Drift [DEMO]**: Interactive simulation demonstrating end-to-end drift detection $\rightarrow$ agent analysis $\rightarrow$ retraining $\rightarrow$ deterministic gate evaluation $\rightarrow$ promotion.
+- **Governance Risk Reports**: Auditable reports distinguishing Agent Recommendations from System Decisions.
 
 ### 3. **Drift Detection Engine**
-- **Population Stability Index (PSI)** analysis
-- Automatic trigger at PSI > 0.2
-- Critical/Medium/Low severity flagging
-- Historical tracking and trend analysis
+- **Population Stability Index (PSI)** analysis across 5 key features:
+  - `credit_income_ratio`: PSI 2.7008 (Critical)
+  - `employment_years`: PSI 1.3962 (Critical)
+  - `income`: PSI 0.7726 (Critical)
+  - `age_years`: PSI 0.1223 (Moderate / Increased Monitoring)
+  - `debt_service_ratio`: PSI 0.0941 (Stable)
+- Automatic retraining trigger at PSI > 0.20
 
-### 4. **LLM Hallucination Firewall**
-- Extracts regulatory citations from explanations
-- Validates against `rbi_regulations` and `sebi_regulations` tables
-- Blocks false citations (hallucinations)
-- Returns grounding & hallucination scores
+### 4. **ACTR — AI Cross-Truth Reasoning Framework**
+- 4-stage pipeline for statutory citation auditing and hallucination prevention.
+- Cross-references claims against RBI Guidelines Database, SEBI Regulatory Rules, and compliance constraints.
+
 
 ## 🔧 Configuration
 

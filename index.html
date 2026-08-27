@@ -46,6 +46,7 @@
     </div>
     <nav class="nav-links">
       <a href="#assess" class="nav-link active">Assessment</a>
+      <a href="#actr-engine" class="nav-link">ACTR Engine</a>
       <a href="#dashboard" class="nav-link">Dashboard</a>
       <a href="#arch" class="nav-link">Architecture</a>
     </nav>
@@ -223,15 +224,29 @@
 
               <div class="result-score-label"
                 style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">
-                HALLUCINATION FILTER LOGIC</div>
-              <div id="result-halluc" class="halluc-eval" style="margin: 8px 0 24px;"></div>
+                ACTR VERIFICATION & REASONING ENGINE</div>
+              <div id="result-halluc" class="halluc-eval" style="margin: 8px 0 16px;"></div>
 
               <div class="result-explain-box"
                 style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-                <div class="explain-label"
-                  style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 8px;">
-                  RAG / MLFLOW EXPLANATION:</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <div class="explain-label"
+                    style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">
+                    SAFE VERIFIED RESPONSE (ACTR GROUNDED):</div>
+                  <span id="actr-status-pill" class="badge low">COMPLIANCE SAFE</span>
+                </div>
                 <div id="result-ex" style="font-size: 13px; color: #fff; line-height: 1.6;"></div>
+              </div>
+
+              <!-- Risk Factor Attribution Breakdown (Risk Intelligence Layer) -->
+              <div id="risk-breakdown-box" style="margin-top: 12px; background: rgba(0, 180, 255, 0.03); border: 1px solid rgba(0, 180, 255, 0.15); border-radius: 8px; padding: 12px 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleRiskDecomposition()">
+                  <span style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 600;">
+                    🔍 Why This Prediction? (Major Risk Factors)
+                  </span>
+                  <span id="risk-toggle-arrow" style="color: var(--accent); font-size: 12px;">▼</span>
+                </div>
+                <div id="risk-breakdown-content" style="margin-top: 10px; display: block;"></div>
               </div>
             </div>
           </div>
@@ -240,11 +255,139 @@
       </div>
     </section>
 
+    <!-- ACTR Cross-Truth Reasoning Engine Section -->
+    <section id="actr-engine" class="content-section reveal actr-section" style="margin-top: 6rem;">
+      <div class="section-container">
+        
+        <div class="actr-banner">
+          <div class="actr-banner-icon">✓</div>
+          <div class="actr-banner-text">
+            <strong>ACTR Framework Active:</strong> Real-time regulatory truth-grounding, statutory citation auditing, and compliance-safe neural rewriting for banking AI systems.
+          </div>
+        </div>
+
+        <div class="section-header-row" style="margin-bottom: 2rem;">
+          <div>
+            <div class="section-kicker">02 — Hallucination Prevention</div>
+            <h2 class="section-title" style="margin-bottom: 0;">ACTR — AI Cross-Truth Reasoning Framework</h2>
+          </div>
+          <div class="section-header-badge">
+            <div class="live-badge">
+              <span class="status-dot green"></span>
+              FIREWALL ACTIVE · RBI/SEBI AUDITED
+            </div>
+          </div>
+        </div>
+
+        <p class="section-desc" style="max-width: 860px; margin-bottom: 2.5rem; color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+          Banking AI requires zero-tolerance for hallucinated regulations, unsupported financial claims, and fabricated reasoning. AURA employs the <strong>AI Cross-Truth Reasoning (ACTR)</strong> framework to extract claims, cross-reference them across authoritative databases, detect statutory anomalies, and rewrite explanations into legally verified, compliance-safe responses.
+        </p>
+
+        <!-- 4-Stage Flow Pipeline Visualizer -->
+        <div class="actr-pipeline-diagram">
+          <div class="actr-flow-node">
+            <div class="actr-node-num">Input</div>
+            <div class="actr-node-title">User Query</div>
+            <div class="actr-node-desc">Loan Application</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node">
+            <div class="actr-node-num">Step 1</div>
+            <div class="actr-node-title">LLM Explanation</div>
+            <div class="actr-node-desc">Raw Neural Output</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node core-engine active" id="flow-node-1" onclick="highlightACTRStage(1)">
+            <div class="actr-node-num">ACTR Stage 1</div>
+            <div class="actr-node-title">Claim Extraction</div>
+            <div class="actr-node-desc">Regs, Ratios, Tenures</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node core-engine" id="flow-node-2" onclick="highlightACTRStage(2)">
+            <div class="actr-node-num">ACTR Stage 2</div>
+            <div class="actr-node-title">Cross-Reference</div>
+            <div class="actr-node-desc">RBI & SEBI Databases</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node core-engine" id="flow-node-3" onclick="highlightACTRStage(3)">
+            <div class="actr-node-num">ACTR Stage 3</div>
+            <div class="actr-node-title">Detection Layer</div>
+            <div class="actr-node-desc">Fake Regs & False Claims</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node core-engine" id="flow-node-4" onclick="highlightACTRStage(4)">
+            <div class="actr-node-num">ACTR Stage 4</div>
+            <div class="actr-node-title">Rewriting Engine</div>
+            <div class="actr-node-desc">Compliance Grounding</div>
+          </div>
+          <div class="actr-flow-arrow">→</div>
+          <div class="actr-flow-node safe-output">
+            <div class="actr-node-num" style="color: var(--green-bright);">Verified Output</div>
+            <div class="actr-node-title">Safe Response</div>
+            <div class="actr-node-desc">Zero Hallucinations</div>
+          </div>
+        </div>
+
+        <!-- Interactive ACTR Playground -->
+        <div class="actr-grid">
+          <div class="actr-card">
+            <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 8px;">
+              Interactive ACTR Test Suite
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 18px; color: #fff; margin-bottom: 1rem;">
+              Select Benchmark or Test Custom LLM Explanation
+            </h3>
+
+            <div class="actr-presets">
+              <button class="actr-preset-btn active" onclick="loadACTRPreset('fake_sec23b', event)">
+                <span>🚨 Fake Law: Section 23B (Mandatory CIBIL 750)</span>
+                <span class="actr-preset-tag flagged">Hallucinated</span>
+              </button>
+              <button class="actr-preset-btn" onclick="loadACTRPreset('fake_rbi999', event)">
+                <span>🚨 Fake Circular: RBI/2023/999 (6-Month Tenure Ban)</span>
+                <span class="actr-preset-tag flagged">Hallucinated</span>
+              </button>
+              <button class="actr-preset-btn" onclick="loadACTRPreset('fake_art15c', event)">
+                <span>🚨 Fabricated Rule: Article 15C (Phantom DSR Cap)</span>
+                <span class="actr-preset-tag flagged">Hallucinated</span>
+              </button>
+              <button class="actr-preset-btn" onclick="loadACTRPreset('clean_rbi', event)">
+                <span>✅ Grounded Truth: Digital Lending & NBFC Code</span>
+                <span class="actr-preset-tag clean">Verified Safe</span>
+              </button>
+            </div>
+
+            <label style="display: block; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px;">
+              Raw LLM Explanation Input
+            </label>
+            <textarea id="actr-custom-input" class="actr-input-area" placeholder="Enter loan decision explanation to test with ACTR..."></textarea>
+
+            <button id="actr-verify-btn" class="btn-primary" style="width: 100%; justify-content: center;" onclick="runACTRInteractiveVerification()">
+              Run ACTR Cross-Truth Verification →
+            </button>
+          </div>
+
+          <!-- ACTR Verification Results & 4 Stages -->
+          <div class="actr-card" id="actr-results-panel">
+            <div id="actr-loading" style="display: none; text-align: center; padding: 40px 0;">
+              <div class="spinner" style="margin: 0 auto 16px auto;"></div>
+              <div style="font-family: var(--font-mono); font-size: 12px; color: var(--accent);">Running ACTR 4-Stage Reasoning Pipeline...</div>
+            </div>
+
+            <div id="actr-content">
+              <!-- Rendered dynamically by script.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <section id="dashboard" class="content-section reveal" style="margin-top: 5rem;">
       <div class="section-container">
         <div class="section-header-row" style="margin-bottom: 2.5rem;">
           <div>
-            <div class="section-kicker">02 — System Metrics</div>
+            <div class="section-kicker">03 — System Metrics</div>
             <h2 class="section-title" style="margin-bottom: 0;">System Dashboard</h2>
           </div>
           <div class="section-header-badge">
@@ -258,28 +401,28 @@
         <div class="kpi-grid">
           <div class="kpi-card success">
             <div class="kpi-label">Active Model</div>
-            <div class="kpi-value cyan" id="dash-model">Champion</div>
-            <div class="kpi-sub green">aura_credit_champion · Production</div>
+            <div class="kpi-value cyan" id="dash-model">XGBoost</div>
+            <div class="kpi-sub green">aura_credit_champion (v12) · Production</div>
           </div>
           <div class="kpi-card success">
             <div class="kpi-label">Champion AUC</div>
-            <div class="kpi-value green" id="dash-auc">0.7210</div>
-            <div class="kpi-sub green">Above 0.70 baseline</div>
+            <div class="kpi-value green" id="dash-auc">0.7352</div>
+            <div class="kpi-sub green">72.1% Accuracy · F1: 0.2635</div>
           </div>
           <div class="kpi-card critical">
             <div class="kpi-label">Features Drifted</div>
-            <div class="kpi-value red" id="dash-drifted">2</div>
-            <div class="kpi-sub red">income, credit_income_ratio</div>
+            <div class="kpi-value red" id="dash-drifted">3</div>
+            <div class="kpi-sub red">CIR (2.70), Emp (1.40), Inc (0.77)</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">Challenger AUC</div>
-            <div class="kpi-value" id="dash-challenger">0.7540</div>
-            <div class="kpi-sub green">+0.033 vs Champion</div>
+            <div class="kpi-value" id="dash-challenger">0.7327</div>
+            <div class="kpi-sub green">+0.0049 vs RF v6 (Gate Passed)</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Hallucinations Blocked</div>
-            <div class="kpi-value red" id="dash-halluc">2</div>
-            <div class="kpi-sub">of 3 applications evaluated</div>
+          <div class="kpi-card success">
+            <div class="kpi-label">Model Health</div>
+            <div class="kpi-value cyan" id="dash-health">82</div>
+            <div class="kpi-sub green" id="dash-health-sub">HEALTHY · Monitoring Active</div>
           </div>
         </div>
 
@@ -293,7 +436,7 @@
                   <div class="widget-source">gold.drift_metrics · PSI Analysis</div>
                 </div>
               </div>
-              <div class="widget-badge badge high">2 CRITICAL</div>
+              <div id="drift-widget-badge" class="widget-badge badge high">3 CRITICAL</div>
             </div>
             <div id="drift-widget-content"></div>
           </div>
@@ -326,12 +469,96 @@
             <div id="halluc-widget-content" style="overflow-x:auto;"></div>
           </div>
         </div>
+
+        <!-- AURA Risk Intelligence Agent (Minimal Glassmorphism Panel) -->
+        <div class="agent-card-container">
+          <div class="agent-header-row">
+            <div class="agent-title-wrap">
+              <div class="agent-avatar">AI</div>
+              <div>
+                <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600;">
+                  AURA Risk Intelligence Agent
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary);">
+                  Evidence-Grounded Observation, Retraining Justification & Safe Deterministic Orchestration
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <span id="agent-status-badge" class="badge low">● STABLE · MONITORING</span>
+              <button class="btn btn-secondary" onclick="handleSimulateDrift()" style="padding: 6px 14px; font-size: 11px;">
+                ⚡ Simulate Drift (Demo)
+              </button>
+              <button class="btn btn-secondary" onclick="handleResetDrift()" style="padding: 6px 14px; font-size: 11px;">
+                ↺ Reset
+              </button>
+              <button class="btn btn-primary" onclick="handleGenerateRiskReport()" style="padding: 6px 14px; font-size: 11px;">
+                📄 Generate Risk Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Why Did AURA Take This Action? Expandable Drawer -->
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleWhyPanel()">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: var(--accent); font-size: 14px;">💡</span>
+                <span style="font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; color: #fff;">
+                  Why Did AURA Take This Action? (Telemetry Evidence)
+                </span>
+              </div>
+              <span id="why-toggle-arrow" style="color: var(--accent); font-size: 12px;">▼</span>
+            </div>
+            <div id="why-panel-content" style="margin-top: 12px; font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+              <!-- Dynamically populated from backend -->
+            </div>
+          </div>
+
+          <!-- Ask AURA Evidence-Grounded Query Section -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">
+                Ask AURA (Evidence-Grounded Query Engine)
+              </span>
+              <span style="font-size: 11px; color: var(--text-muted);">Grounded in Live Delta Lake & Unity Catalog Telemetry</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+              <button class="agent-query-chip" onclick="handleAskAURA('Why did the model retrain?')">Why did the model retrain?</button>
+              <button class="agent-query-chip" onclick="handleAskAURA('Which feature has the highest drift?')">Which feature has the highest drift?</button>
+              <button class="agent-query-chip" onclick="handleAskAURA('What is the current model health?')">What is the current model health?</button>
+              <button class="agent-query-chip" onclick="handleAskAURA('Why was the Challenger rejected?')">Why was the Challenger rejected?</button>
+              <button class="agent-query-chip" onclick="handleAskAURA('Why was the Challenger promoted?')">Why was the Challenger promoted?</button>
+              <button class="agent-query-chip" onclick="handleAskAURA('What changed in the production data?')">What changed in production data?</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="agent-custom-query" class="form-input" placeholder="Ask AURA about drift telemetry, model health, or promotion decisions..." style="margin: 0; font-size: 12px; height: 38px;">
+              <button class="btn btn-primary" onclick="handleCustomAskAURA()" style="padding: 0 18px; font-size: 12px; height: 38px;">Ask</button>
+            </div>
+            <div id="agent-query-response" class="agent-response-box" style="display: none;"></div>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- Risk Report Modal -->
+    <div id="risk-report-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--accent); text-transform: uppercase;">AURA Governance Audit Trail</div>
+            <h3 style="margin: 4px 0 0; color: #fff; font-size: 18px;">Risk Intelligence & Promotion Audit Report</h3>
+          </div>
+          <button class="btn btn-secondary" onclick="closeRiskReportModal()" style="padding: 4px 10px; font-size: 12px;">✕ Close</button>
+        </div>
+        <div id="risk-report-content" style="font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
     <section id="arch" class="content-section reveal" style="margin-top: 8rem; margin-bottom: 8rem;">
       <div class="section-container">
-        <div class="section-kicker" style="text-align: center;">03 — Infrastructure</div>
+        <div class="section-kicker" style="text-align: center;">04 — Infrastructure</div>
         <h2 class="section-title" style="text-align: center;">The Foundation</h2>
         <p class="section-desc" style="max-width: 600px; margin: 0 auto 5rem auto; text-align: center;">Built on robust
           Databricks infrastructure, forming a completely self-sustaining MLOps lifecycle from ingestion to
